@@ -1,0 +1,100 @@
+#
+# Ansible managed
+#
+
+[client]
+#password = your_password
+port = 3306
+socket = /var/lib/mysql/mysql.sock
+
+[mysqld]
+port = 3306
+bind-address = 192.168.56.122
+datadir = /var/lib/mysql
+socket = /var/lib/mysql/mysql.sock
+pid-file = /var/run/mysqld/mysqld.pid
+
+# Logging configuration.
+log-error = /var/lib/mysql/mysqld.err
+
+################################################################
+
+# Enable the Group Replication plugin
+plugin-load                       = group_replication.so
+
+# General settings - ensure the binary log is enabled, disable all non-transactional storageengines except CSV (used for logs), etc.
+
+log_bin
+disabled_storage_engines          = MyISAM,BLACKHOLE,FEDERATED,ARCHIVE
+ssl
+auto_increment_increment = 1
+auto_increment_offset             = 2
+
+# Binary Log and Replication
+server_id                         = 2
+binlog_format                     = ROW
+binlog_rows_query_log_events      = ON
+gtid_mode                         = ON
+enforce_gtid_consistency          = ON
+log_slave_updates                 = ON
+master_info_repository            = TABLE
+relay_log_info_repository         = TABLE
+transaction_write_set_extraction  = XXHASH64
+binlog_checksum                   = NONE
+
+# Group Replication
+group_replication                 = FORCE_PLUS_PERMANENT
+loose_group_replication_start_on_boot = ON
+loose_group_replication_local_address = inno2:33061
+loose_group_replication_group_seeds = inno1:33061,inno3:33061
+
+################################################################
+
+# Disabling symbolic-links is recommended to prevent assorted security risks
+symbolic-links = 0
+
+# User is ignored when systemd is used (fedora >= 15).
+user = mysql
+
+# http://dev.mysql.com/doc/refman/5.5/en/performance-schema.html
+;performance_schema
+
+# Memory settings.
+key_buffer_size = 256M
+max_allowed_packet = 64M
+table_open_cache = 256
+sort_buffer_size = 1M
+read_buffer_size = 1M
+read_rnd_buffer_size = 4M
+myisam_sort_buffer_size = 64M
+thread_cache_size = 8
+query_cache_type = 0
+query_cache_size = 16M
+query_cache_limit = 1M
+max_connections = 151
+tmp_table_size = 16M
+max_heap_table_size = 16M
+group_concat_max_len = 1024
+join_buffer_size = 262144
+
+# Other settings.
+wait_timeout = 28800
+lower_case_table_names = 0
+event_scheduler = OFF
+
+# InnoDB settings.
+innodb_large_prefix = 1
+innodb_file_format = barracuda
+innodb_file_per_table = 1
+innodb_buffer_pool_size = 256M
+innodb_log_file_size = 64M
+innodb_log_buffer_size = 8M
+innodb_flush_log_at_trx_commit = 1
+innodb_lock_wait_timeout = 50
+
+[mysqldump]
+quick
+max_allowed_packet = 64M
+
+[mysqld_safe]
+pid-file = /var/run/mysqld/mysqld.pid

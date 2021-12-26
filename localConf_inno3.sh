@@ -1,0 +1,1 @@
+sudo mysqlsh --uri clususer@inno3 -p'G0w@y#4041!' --execute="dba.configureLocalInstance('clususer@inno3:3306',{mycnfPath:'/etc/my.cnf',password:'G0w@y#4041\!'})"
